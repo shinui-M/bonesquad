@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS groups (
   name TEXT UNIQUE NOT NULL,
   description TEXT,
   emoji TEXT,
+  created_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -185,10 +186,18 @@ CREATE POLICY "Users can delete their own comments"
   ON comments FOR DELETE
   USING (auth.uid() = user_id);
 
--- Groups policies (read-only for users, admin manages)
+-- Groups policies
 CREATE POLICY "Groups are viewable by everyone"
   ON groups FOR SELECT
   USING (true);
+
+CREATE POLICY "Users can create groups"
+  ON groups FOR INSERT
+  WITH CHECK (auth.uid() = created_by);
+
+CREATE POLICY "Users can delete their own groups"
+  ON groups FOR DELETE
+  USING (auth.uid() = created_by);
 
 -- Group members policies
 CREATE POLICY "Group members are viewable by everyone"

@@ -122,6 +122,7 @@ export interface Database {
           name: string
           description: string | null
           emoji: string | null
+          created_by: string | null
           created_at: string
         }
         Insert: {
@@ -129,6 +130,7 @@ export interface Database {
           name: string
           description?: string | null
           emoji?: string | null
+          created_by?: string | null
           created_at?: string
         }
         Update: {
@@ -136,6 +138,7 @@ export interface Database {
           name?: string
           description?: string | null
           emoji?: string | null
+          created_by?: string | null
           created_at?: string
         }
       }

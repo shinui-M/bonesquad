@@ -25,7 +25,7 @@ export function useGroups() {
       const { data, error: fetchError } = await supabase
         .from('groups')
         .select('*')
-        .order('name', { ascending: true })
+        .order('created_at', { ascending: false })
 
       if (fetchError) throw fetchError
 
@@ -41,7 +41,52 @@ export function useGroups() {
     fetchGroups()
   }, [fetchGroups])
 
-  return { groups, loading, error, refetch: fetchGroups }
+  // Real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('groups_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'groups' },
+        () => fetchGroups()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [fetchGroups])
+
+  const createGroup = async (
+    userId: string,
+    data: { name: string; description?: string; emoji?: string }
+  ) => {
+    const { error } = await supabase
+      .from('groups')
+      .insert({
+        name: data.name,
+        description: data.description || null,
+        emoji: data.emoji || null,
+        created_by: userId,
+      })
+
+    if (error) throw error
+
+    await fetchGroups()
+  }
+
+  const deleteGroup = async (groupId: string) => {
+    const { error } = await supabase
+      .from('groups')
+      .delete()
+      .eq('id', groupId)
+
+    if (error) throw error
+
+    await fetchGroups()
+  }
+
+  return { groups, loading, error, refetch: fetchGroups, createGroup, deleteGroup }
 }
 
 export function useGroupMembers(groupId: string | null) {
