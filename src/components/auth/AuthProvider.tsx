@@ -59,17 +59,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Get initial session
     const initializeAuth = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession()
+      console.log('[Auth] Initializing...')
+      try {
+        const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession()
 
-      setSession(initialSession)
-      setUser(initialSession?.user ?? null)
+        if (sessionError) {
+          console.error('[Auth] Session error:', sessionError)
+        }
 
-      if (initialSession?.user) {
-        const profileData = await fetchProfile(initialSession.user.id)
-        setProfile(profileData)
+        console.log('[Auth] Session:', initialSession ? 'exists' : 'null')
+
+        setSession(initialSession)
+        setUser(initialSession?.user ?? null)
+
+        if (initialSession?.user) {
+          console.log('[Auth] Fetching profile for:', initialSession.user.id)
+          const profileData = await fetchProfile(initialSession.user.id)
+          console.log('[Auth] Profile:', profileData ? 'found' : 'not found')
+          setProfile(profileData)
+        }
+
+        console.log('[Auth] Setting loading to false')
+        setLoading(false)
+      } catch (err) {
+        console.error('[Auth] Init error:', err)
+        setLoading(false)
       }
-
-      setLoading(false)
     }
 
     initializeAuth()
