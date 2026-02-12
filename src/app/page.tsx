@@ -48,22 +48,30 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Banner with User Menu */}
-      <header className="bg-gradient-to-r from-red-500 to-red-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header
+        className="text-white relative"
+        style={{
+          backgroundImage: 'url(/banner.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="max-w-7xl mx-auto px-4 py-6 relative z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-3xl">💀</span>
+              <span className="text-4xl drop-shadow-lg">💀</span>
               <div>
-                <h1 className="text-2xl font-bold">뼈갈단</h1>
-                <p className="text-red-100 text-sm hidden sm:block">
+                <h1 className="text-3xl font-bold drop-shadow-lg">뼈갈단</h1>
+                <p className="text-white/90 text-sm hidden sm:block drop-shadow">
                   함께 성장하는 스터디 그룹
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-red-100">
+              <div className="hidden md:flex items-center gap-2 text-white/90">
                 <span>🔥</span>
-                <span className="text-sm">뼈를 갈아서라도 성공하자!</span>
+                <span className="text-sm drop-shadow">뼈를 갈아서라도 성공하자!</span>
               </div>
               <UserMenu />
             </div>
@@ -86,7 +94,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-100 border-t">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center text-gray-500 text-sm">
-          <p>© 2024 뼈갈단. 뼈를 갈아서라도 성공하자! 💀🔥</p>
+          <p>© 2026 뼈갈단. 뼈를 갈아서라도 성공하자! 💀🔥</p>
         </div>
       </footer>
     </div>
