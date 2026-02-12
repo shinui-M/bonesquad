@@ -17,7 +17,11 @@ export function useWeeklyLogs(startDate: Date, endDate: Date) {
     setError(null)
 
     try {
-      const { data, error: fetchError } = await supabase
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Fetch timeout')), 10000)
+      )
+
+      const fetchPromise = supabase
         .from('weekly_logs')
         .select(`
           *,
@@ -27,10 +31,13 @@ export function useWeeklyLogs(startDate: Date, endDate: Date) {
         .lte('date', formatDateString(endDate))
         .order('date', { ascending: true })
 
+      const { data, error: fetchError } = await Promise.race([fetchPromise, timeoutPromise]) as any
+
       if (fetchError) throw fetchError
 
       setLogs(data as WeeklyLogWithAuthor[])
     } catch (err) {
+      console.error('[WeeklyLogs] Error:', err)
       setError(err as Error)
     } finally {
       setLoading(false)
