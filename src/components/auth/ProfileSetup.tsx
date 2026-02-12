@@ -9,14 +9,22 @@ interface ProfileSetupProps {
 }
 
 export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
-  const { user, updateProfile } = useAuth()
-  const [name, setName] = useState('')
-  const [bio, setBio] = useState('')
-  const [avatarStyle, setAvatarStyle] = useState<AvatarStyle>('notionists')
+  const { user, profile, updateProfile } = useAuth()
+  const [name, setName] = useState(profile?.name || '')
+  const [bio, setBio] = useState(profile?.bio || '')
+  const [avatarStyle, setAvatarStyle] = useState<AvatarStyle>(
+    (profile?.avatar_style as AvatarStyle) || 'notionists'
+  )
+  const [avatarSeed, setAvatarSeed] = useState(profile?.name || 'seed')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const previewAvatarUrl = generateAvatarUrl(name || 'preview', avatarStyle)
+  const previewAvatarUrl = generateAvatarUrl(avatarSeed || 'preview', avatarStyle)
+
+  const handleRandomSeed = () => {
+    const randomSeed = Math.random().toString(36).substring(2, 10)
+    setAvatarSeed(randomSeed)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,7 +40,7 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
       name: name.trim(),
       bio: bio.trim() || null,
       avatar_style: avatarStyle,
-      avatar_url: generateAvatarUrl(name.trim(), avatarStyle),
+      avatar_url: generateAvatarUrl(avatarSeed, avatarStyle),
     })
 
     if (updateError) {
@@ -58,7 +66,33 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
             alt="Avatar preview"
             className="w-24 h-24 rounded-full bg-gray-100 mb-2"
           />
-          <p className="text-sm text-gray-500">아바타 미리보기</p>
+          <div className="flex gap-2 mt-2">
+            <button
+              type="button"
+              onClick={handleRandomSeed}
+              className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
+            >
+              🎲 랜덤 변경
+            </button>
+          </div>
+        </div>
+
+        {/* Avatar Seed Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            아바타 시드 (변형)
+          </label>
+          <input
+            type="text"
+            value={avatarSeed}
+            onChange={(e) => setAvatarSeed(e.target.value)}
+            placeholder="원하는 단어 입력"
+            className="input-field"
+            disabled={loading}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            같은 화풍에서 다른 모습을 원하면 다른 단어를 입력하세요
+          </p>
         </div>
 
         {/* Name Input */}
@@ -98,7 +132,7 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
         {/* Avatar Style Selection */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            아바타 스타일
+            아바타 화풍
           </label>
           <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto p-2 border rounded-md">
             {AVATAR_STYLES.map((style) => (
@@ -113,7 +147,7 @@ export default function ProfileSetup({ onComplete }: ProfileSetupProps) {
                 }`}
               >
                 <img
-                  src={generateAvatarUrl(name || 'sample', style, 48)}
+                  src={generateAvatarUrl(avatarSeed || 'sample', style, 48)}
                   alt={style}
                   className="w-12 h-12 mb-1"
                 />

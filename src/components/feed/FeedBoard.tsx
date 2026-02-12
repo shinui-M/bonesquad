@@ -12,9 +12,9 @@ export default function FeedBoard() {
   const { feeds, loading, createFeed, updateFeed, deleteFeed, addComment, deleteComment } = useFeeds()
   const [showForm, setShowForm] = useState(false)
 
-  const handleCreateFeed = async (content: string) => {
+  const handleCreateFeed = async (content: string, imageFile?: File) => {
     if (!user) return
-    await createFeed(user.id, content)
+    await createFeed(user.id, content, imageFile)
     setShowForm(false)
   }
 

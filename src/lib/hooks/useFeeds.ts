@@ -77,7 +77,30 @@ export function useFeeds() {
     }
   }, [fetchFeeds])
 
-  const createFeed = async (userId: string, content: string, imageUrl?: string) => {
+  const uploadImage = async (file: File, userId: string): Promise<string> => {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${userId}/${Date.now()}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('feed-images')
+      .upload(fileName, file)
+
+    if (uploadError) throw uploadError
+
+    const { data } = supabase.storage
+      .from('feed-images')
+      .getPublicUrl(fileName)
+
+    return data.publicUrl
+  }
+
+  const createFeed = async (userId: string, content: string, imageFile?: File) => {
+    let imageUrl: string | undefined
+
+    if (imageFile) {
+      imageUrl = await uploadImage(imageFile, userId)
+    }
+
     const { data, error } = await supabase
       .from('feeds')
       .insert({

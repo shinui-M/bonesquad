@@ -48,34 +48,15 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Banner with User Menu */}
-      <header
-        className="text-white relative"
-        style={{
-          backgroundImage: 'url(/banner.png)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="max-w-7xl mx-auto px-4 py-6 relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl drop-shadow-lg">💀</span>
-              <div>
-                <h1 className="text-3xl font-bold drop-shadow-lg">뼈갈단</h1>
-                <p className="text-white/90 text-sm hidden sm:block drop-shadow">
-                  함께 성장하는 스터디 그룹
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-2 text-white/90">
-                <span>🔥</span>
-                <span className="text-sm drop-shadow">뼈를 갈아서라도 성공하자!</span>
-              </div>
-              <UserMenu />
-            </div>
-          </div>
+      <header className="relative">
+        <img
+          src="/banner.png"
+          alt="뼈갈단 배너"
+          className="w-full h-32 sm:h-40 md:h-48 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent" />
+        <div className="absolute top-0 right-0 p-4 z-10">
+          <UserMenu />
         </div>
       </header>
 
