@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f5f5;
+  --foreground: #333333;
+  --primary: #e74c3c;
+  --primary-dark: #c0392b;
+  --accent-green: #2ecc71;
+  --accent-blue: #3498db;
+  --accent-yellow: #f1c40f;
+  --accent-gray: #95a5a6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-accent-green: var(--accent-green);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-gray: var(--accent-gray);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Tab navigation styles */
+.tab-btn {
+  @apply px-4 py-2 text-gray-600 bg-transparent border-b-2 border-transparent cursor-pointer transition-all duration-200 hover:bg-gray-100;
+}
+
+.tab-btn.active {
+  @apply text-primary border-b-2 border-primary font-medium;
+}
+
+/* Rating stars */
+.star-rating {
+  @apply flex gap-0.5;
+}
+
+.star {
+  @apply cursor-pointer text-gray-300 transition-colors duration-150;
+}
+
+.star.filled {
+  @apply text-yellow-400;
+}
+
+.star.half {
+  background: linear-gradient(90deg, #f1c40f 50%, #d1d5db 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
+/* Avatar styles */
+.avatar {
+  @apply w-10 h-10 rounded-full bg-gray-200 overflow-hidden;
+}
+
+.avatar img {
+  @apply w-full h-full object-cover;
+}
+
+/* Feed card */
+.feed-card {
+  @apply bg-white rounded-lg shadow-md p-4 mb-4;
+}
+
+/* Day column hover effect */
+.day-column:hover {
+  @apply shadow-md;
+}
+
+/* Submitter card */
+.submitter-card {
+  @apply bg-white border border-gray-200 rounded-md p-2 flex items-center gap-2 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply w-full py-3 bg-primary text-white rounded-md font-medium transition-colors duration-200 hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-gray-200 text-gray-700 rounded-md font-medium transition-colors duration-200 hover:bg-gray-300;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+}
+
+.textarea-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+}
+
+/* Group card */
+.group-card {
+  @apply bg-white rounded-lg shadow-md p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+}
+
+/* Loading spinner */
+.spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary;
+}
