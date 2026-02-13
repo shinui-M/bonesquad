@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { fetchWithTimeout } from '@/lib/supabase/fetchWithTimeout'
 import type { FeedWithAuthor, CommentWithAuthor } from '@/lib/types/database'
 
 export function useFeeds() {
@@ -16,22 +17,27 @@ export function useFeeds() {
     setError(null)
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('feeds')
-        .select(`
-          *,
-          profiles (*),
-          comments (
+      const data = await fetchWithTimeout(
+        supabase
+          .from('feeds')
+          .select(`
             *,
-            profiles (*)
-          )
-        `)
-        .order('created_at', { ascending: false })
+            profiles (*),
+            comments (
+              *,
+              profiles (*)
+            )
+          `)
+          .order('created_at', { ascending: false })
+      )
 
-      if (fetchError) throw fetchError
+      if (!data) {
+        setFeeds([])
+        return
+      }
 
       // Sort comments by created_at within each feed
-      const feedsWithSortedComments = data.map((feed) => ({
+      const feedsWithSortedComments = data.map((feed: any) => ({
         ...feed,
         comments: feed.comments?.sort(
           (a: CommentWithAuthor, b: CommentWithAuthor) =>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { fetchWithTimeout } from '@/lib/supabase/fetchWithTimeout'
 import type { Profile } from '@/lib/types/database'
 
 export function useMembers() {
@@ -16,14 +17,14 @@ export function useMembers() {
     setError(null)
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('name', { ascending: true })
+      const data = await fetchWithTimeout(
+        supabase
+          .from('profiles')
+          .select('*')
+          .order('name', { ascending: true })
+      )
 
-      if (fetchError) throw fetchError
-
-      setMembers(data as Profile[])
+      setMembers((data as Profile[]) ?? [])
     } catch (err) {
       setError(err as Error)
     } finally {

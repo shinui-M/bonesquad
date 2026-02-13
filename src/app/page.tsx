@@ -4,36 +4,25 @@ import { useState } from 'react'
 import TabNavigation from '@/components/layout/TabNavigation'
 import Container from '@/components/layout/Container'
 import UserMenu from '@/components/layout/UserMenu'
-import WeeklyCalendar from '@/components/calendar/WeeklyCalendar'
+import DailyAchievement from '@/components/calendar/DailyAchievement'
 import FeedBoard from '@/components/feed/FeedBoard'
 import GroupList from '@/components/group/GroupList'
 import MemberList from '@/components/member/MemberList'
-import { useAuth } from '@/components/auth/AuthProvider'
-import Loading from '@/components/ui/Loading'
 
 const TABS = [
-  { id: 'calendar', label: '주간 캘린더', icon: '📅' },
+  { id: 'calendar', label: '오늘의 성과', icon: '📅' },
   { id: 'feed', label: '뼈이스북', icon: '💬' },
   { id: 'groups', label: '스터디 그룹', icon: '📚' },
   { id: 'members', label: '멤버', icon: '👥' },
 ]
 
 export default function Home() {
-  const { loading } = useAuth()
   const [activeTab, setActiveTab] = useState('calendar')
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loading size="lg" text="로딩 중..." />
-      </div>
-    )
-  }
 
   const renderContent = () => {
     switch (activeTab) {
       case 'calendar':
-        return <WeeklyCalendar />
+        return <DailyAchievement />
       case 'feed':
         return <FeedBoard />
       case 'groups':
@@ -41,7 +30,7 @@ export default function Home() {
       case 'members':
         return <MemberList />
       default:
-        return <WeeklyCalendar />
+        return <DailyAchievement />
     }
   }
 

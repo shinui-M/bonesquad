@@ -9,10 +9,9 @@ import type { WeeklyLogWithAuthor, WeeklyLogItem } from '@/lib/types/database'
 import type { AvatarStyle } from '@/lib/utils/avatar'
 
 const CATEGORIES = [
-  { value: 'study', label: '공부', emoji: '📚' },
-  { value: 'exercise', label: '운동', emoji: '💪' },
-  { value: 'work', label: '업무', emoji: '💼' },
-  { value: 'hobby', label: '취미', emoji: '🎨' },
+  { value: 'immersion', label: '몰입', emoji: '🔥' },
+  { value: 'growth', label: '성장', emoji: '🌱' },
+  { value: 'recharge', label: '충전', emoji: '🔋' },
   { value: 'etc', label: '기타', emoji: '📝' },
 ]
 
@@ -37,7 +36,7 @@ export default function TaskModal({
   isOwnLog,
 }: TaskModalProps) {
   const [items, setItems] = useState<WeeklyLogItem[]>([
-    { category: 'study', content: '' },
+    { category: 'immersion', content: '' },
   ])
   const [rating, setRating] = useState<number>(0)
   const [saving, setSaving] = useState(false)
@@ -45,16 +44,16 @@ export default function TaskModal({
   useEffect(() => {
     if (existingLog) {
       const content = existingLog.content as { items: WeeklyLogItem[] }
-      setItems(content.items.length > 0 ? content.items : [{ category: 'study', content: '' }])
+      setItems(content.items.length > 0 ? content.items : [{ category: 'immersion', content: '' }])
       setRating(existingLog.rating || 0)
     } else {
-      setItems([{ category: 'study', content: '' }])
+      setItems([{ category: 'immersion', content: '' }])
       setRating(0)
     }
   }, [existingLog])
 
   const handleAddItem = () => {
-    setItems([...items, { category: 'study', content: '' }])
+    setItems([...items, { category: 'immersion', content: '' }])
   }
 
   const handleRemoveItem = (index: number) => {
@@ -84,7 +83,7 @@ export default function TaskModal({
   }
 
   const getCategoryInfo = (value: string) => {
-    return CATEGORIES.find((c) => c.value === value) || CATEGORIES[4]
+    return CATEGORIES.find((c) => c.value === value) || CATEGORIES[3]
   }
 
   // Read-only view for other users' logs

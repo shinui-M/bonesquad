@@ -62,19 +62,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('[Auth] Initializing...')
       try {
         // Add timeout to prevent infinite hang
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Session timeout')), 5000)
+        const timeoutPromise = new Promise<null>((resolve) =>
+          setTimeout(() => {
+            console.warn('[Auth] Session fetch timed out after 3s')
+            resolve(null)
+          }, 3000)
         )
 
-        const sessionPromise = supabase.auth.getSession()
+        const sessionPromise = supabase.auth.getSession().then(({ data, error: sessionError }) => {
+          if (sessionError) {
+            console.error('[Auth] Session error:', sessionError)
+            return null
+          }
+          return data.session
+        })
 
-        const result = await Promise.race([sessionPromise, timeoutPromise]) as { data: { session: any }, error: any }
-
-        const { data: { session: initialSession }, error: sessionError } = result
-
-        if (sessionError) {
-          console.error('[Auth] Session error:', sessionError)
-        }
+        const initialSession = await Promise.race([sessionPromise, timeoutPromise])
 
         console.log('[Auth] Session:', initialSession ? 'exists' : 'null')
 

@@ -6,12 +6,14 @@ import Avatar from '@/components/ui/Avatar'
 import Modal from '@/components/ui/Modal'
 import LoginForm from '@/components/auth/LoginForm'
 import ProfileSetup from '@/components/auth/ProfileSetup'
+import ImportModal from '@/components/import/ImportModal'
 import type { AvatarStyle } from '@/lib/utils/avatar'
 
 export default function UserMenu() {
   const { user, profile, loading, signOut } = useAuth()
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
   if (loading) {
@@ -103,6 +105,15 @@ export default function UserMenu() {
             </button>
             <button
               onClick={() => {
+                setShowImportModal(true)
+                setShowMenu(false)
+              }}
+              className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+            >
+              데이터 가져오기
+            </button>
+            <button
+              onClick={() => {
                 signOut()
                 setShowMenu(false)
               }}
@@ -122,6 +133,11 @@ export default function UserMenu() {
       >
         <ProfileSetup onComplete={() => setShowProfileModal(false)} />
       </Modal>
+
+      <ImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+      />
     </div>
   )
 }

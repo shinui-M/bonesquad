@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { fetchWithTimeout } from '@/lib/supabase/fetchWithTimeout'
 import type {
   Group,
   GroupMemberWithProfile,
@@ -22,14 +23,14 @@ export function useGroups() {
     setError(null)
 
     try {
-      const { data, error: fetchError } = await supabase
-        .from('groups')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const data = await fetchWithTimeout(
+        supabase
+          .from('groups')
+          .select('*')
+          .order('created_at', { ascending: false })
+      )
 
-      if (fetchError) throw fetchError
-
-      setGroups(data as Group[])
+      setGroups((data as Group[]) ?? [])
     } catch (err) {
       setError(err as Error)
     } finally {

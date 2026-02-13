@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { fetchWithTimeout } from '@/lib/supabase/fetchWithTimeout'
 import type { WeeklyLogWithAuthor, WeeklyLogContent } from '@/lib/types/database'
 import { formatDateString } from '@/lib/utils/date'
 
@@ -17,25 +18,19 @@ export function useWeeklyLogs(startDate: Date, endDate: Date) {
     setError(null)
 
     try {
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Fetch timeout')), 10000)
+      const data = await fetchWithTimeout(
+        supabase
+          .from('weekly_logs')
+          .select(`
+            *,
+            profiles (*)
+          `)
+          .gte('date', formatDateString(startDate))
+          .lte('date', formatDateString(endDate))
+          .order('date', { ascending: true })
       )
 
-      const fetchPromise = supabase
-        .from('weekly_logs')
-        .select(`
-          *,
-          profiles (*)
-        `)
-        .gte('date', formatDateString(startDate))
-        .lte('date', formatDateString(endDate))
-        .order('date', { ascending: true })
-
-      const { data, error: fetchError } = await Promise.race([fetchPromise, timeoutPromise]) as any
-
-      if (fetchError) throw fetchError
-
-      setLogs(data as WeeklyLogWithAuthor[])
+      setLogs((data as WeeklyLogWithAuthor[]) ?? [])
     } catch (err) {
       console.error('[WeeklyLogs] Error:', err)
       setError(err as Error)

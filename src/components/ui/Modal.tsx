@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useCallback, ReactNode } from 'react'
+import { useEffect, useCallback, useState, ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ModalProps {
   isOpen: boolean
@@ -17,6 +18,8 @@ export default function Modal({
   children,
   size = 'md',
 }: ModalProps) {
+  const [mounted, setMounted] = useState(false)
+
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
@@ -34,6 +37,10 @@ export default function Modal({
   )
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'hidden'
@@ -45,9 +52,9 @@ export default function Modal({
     }
   }, [isOpen, handleKeyDown])
 
-  if (!isOpen) return null
+  if (!isOpen || !mounted) return null
 
-  return (
+  const modalContent = (
     <div
       className="modal-overlay"
       onClick={(e) => {
@@ -85,4 +92,6 @@ export default function Modal({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }
