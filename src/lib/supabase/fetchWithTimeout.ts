@@ -4,7 +4,7 @@
  */
 export async function fetchWithTimeout<T>(
   queryPromise: PromiseLike<{ data: T; error: any }>,
-  timeoutMs = 5000
+  timeoutMs = 12000
 ): Promise<T | null> {
   let timedOut = false
 

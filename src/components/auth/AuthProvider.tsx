@@ -150,16 +150,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: new Error('Not authenticated') }
     }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id)
+    try {
+      const timeoutPromise = new Promise<{ error: Error }>((resolve) =>
+        setTimeout(() => resolve({ error: new Error('프로필 업데이트 시간 초과 - Supabase 연결을 확인해주세요') }), 15000)
+      )
 
-    if (!error) {
-      await refreshProfile()
+      const updatePromise = supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .then(({ error: updateError }) => ({ error: updateError as Error | null }))
+
+      const result = await Promise.race([updatePromise, timeoutPromise])
+
+      if (!result.error) {
+        await refreshProfile()
+      }
+
+      return { error: result.error }
+    } catch (err) {
+      return { error: err as Error }
     }
-
-    return { error: error as Error | null }
   }
 
   const value: AuthContextType = {
