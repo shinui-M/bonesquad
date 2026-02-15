@@ -59,9 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Get initial session with timeout
     const initializeAuth = async () => {
-      console.log('[Auth] Initializing...')
       try {
-        // Add timeout to prevent infinite hang
         const timeoutPromise = new Promise<null>((resolve) =>
           setTimeout(() => {
             console.warn('[Auth] Session fetch timed out after 3s')
@@ -79,23 +77,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const initialSession = await Promise.race([sessionPromise, timeoutPromise])
 
-        console.log('[Auth] Session:', initialSession ? 'exists' : 'null')
-
         setSession(initialSession)
         setUser(initialSession?.user ?? null)
 
+        // Set loading false immediately so tabs can start fetching data
+        // Profile fetch continues in background
+        setLoading(false)
+
         if (initialSession?.user) {
-          console.log('[Auth] Fetching profile for:', initialSession.user.id)
           const profileData = await fetchProfile(initialSession.user.id)
-          console.log('[Auth] Profile:', profileData ? 'found' : 'not found')
           setProfile(profileData)
         }
-
-        console.log('[Auth] Setting loading to false')
-        setLoading(false)
       } catch (err) {
         console.error('[Auth] Init error:', err)
-        // On timeout or error, still set loading to false so UI can render
         setLoading(false)
       }
     }

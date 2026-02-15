@@ -18,8 +18,8 @@ export function useGroups() {
 
   const supabase = createClient()
 
-  const fetchGroups = useCallback(async () => {
-    setLoading(true)
+  const fetchGroups = useCallback(async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true)
     setError(null)
 
     try {
@@ -49,7 +49,7 @@ export function useGroups() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'groups' },
-        () => fetchGroups()
+        () => fetchGroups(true)
       )
       .subscribe()
 

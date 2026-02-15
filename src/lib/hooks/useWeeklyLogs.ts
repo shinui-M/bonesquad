@@ -13,8 +13,8 @@ export function useWeeklyLogs(startDate: Date, endDate: Date) {
 
   const supabase = createClient()
 
-  const fetchLogs = useCallback(async () => {
-    setLoading(true)
+  const fetchLogs = useCallback(async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true)
     setError(null)
 
     try {
@@ -55,7 +55,7 @@ export function useWeeklyLogs(startDate: Date, endDate: Date) {
           table: 'weekly_logs',
         },
         () => {
-          fetchLogs()
+          fetchLogs(true)
         }
       )
       .subscribe()

@@ -12,8 +12,8 @@ export function useMembers() {
 
   const supabase = createClient()
 
-  const fetchMembers = useCallback(async () => {
-    setLoading(true)
+  const fetchMembers = useCallback(async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true)
     setError(null)
 
     try {

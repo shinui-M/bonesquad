@@ -12,8 +12,8 @@ export function useFeeds() {
 
   const supabase = createClient()
 
-  const fetchFeeds = useCallback(async () => {
-    setLoading(true)
+  const fetchFeeds = useCallback(async (isRefresh = false) => {
+    if (!isRefresh) setLoading(true)
     setError(null)
 
     try {
@@ -64,7 +64,7 @@ export function useFeeds() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'feeds' },
-        () => fetchFeeds()
+        () => fetchFeeds(true)
       )
       .subscribe()
 
@@ -73,7 +73,7 @@ export function useFeeds() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'comments' },
-        () => fetchFeeds()
+        () => fetchFeeds(true)
       )
       .subscribe()
 

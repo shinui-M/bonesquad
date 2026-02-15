@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import TabNavigation from '@/components/layout/TabNavigation'
 import Container from '@/components/layout/Container'
 import UserMenu from '@/components/layout/UserMenu'
@@ -18,21 +18,16 @@ const TABS = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('calendar')
+  // Track which tabs have been visited so we mount them lazily but keep them alive
+  const [visitedTabs, setVisitedTabs] = useState<Set<string>>(new Set(['calendar']))
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'calendar':
-        return <DailyAchievement />
-      case 'feed':
-        return <FeedBoard />
-      case 'groups':
-        return <GroupList />
-      case 'members':
-        return <MemberList />
-      default:
-        return <DailyAchievement />
-    }
-  }
+  const handleTabChange = useCallback((tabId: string) => {
+    setActiveTab(tabId)
+    setVisitedTabs(prev => {
+      if (prev.has(tabId)) return prev
+      return new Set([...prev, tabId])
+    })
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -53,12 +48,31 @@ export default function Home() {
       <TabNavigation
         tabs={TABS}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
       />
 
-      {/* Main Content */}
+      {/* Main Content - tabs stay mounted once visited for instant switching */}
       <main className="flex-1">
-        <Container>{renderContent()}</Container>
+        <Container>
+          <div style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}>
+            <DailyAchievement />
+          </div>
+          {visitedTabs.has('feed') && (
+            <div style={{ display: activeTab === 'feed' ? 'block' : 'none' }}>
+              <FeedBoard />
+            </div>
+          )}
+          {visitedTabs.has('groups') && (
+            <div style={{ display: activeTab === 'groups' ? 'block' : 'none' }}>
+              <GroupList />
+            </div>
+          )}
+          {visitedTabs.has('members') && (
+            <div style={{ display: activeTab === 'members' ? 'block' : 'none' }}>
+              <MemberList />
+            </div>
+          )}
+        </Container>
       </main>
 
       {/* Footer */}
